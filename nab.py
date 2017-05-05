@@ -11,7 +11,7 @@ class NationalAustralianBank:
     def __init__(self, infile, atmsfile, brcfile):
         self.postcodes_file = infile
         self.URL  = "https://api.nab.com.au/info/nab/location/locationType/atm+brc/queryType/addr/%s/5/50/1000/1/100?v=1"
-        
+       
         self.atm_file = atmsfile
         self.branch_file = brcfile
 
@@ -138,22 +138,21 @@ class NationalAustralianBank:
         ## READ POSTCODES
         postcodes = self.read_postcodes()
 
-        for i, postcode in enumerate(postcodes):
+        for postcode in postcodes:
 
             sleeptime = round(random.uniform(0.5, 1.0), 2)
             time.sleep(sleeptime)
            
             self.get_url_response(postcode)
 
-         
-        ## WRITE DATA INTO CSV FILES
-        atms = [v for k, v in self.ATMS.items()]
-        if atms:
-            self.write_into_csv(atms, 'atm')
+            ## WRITE DATA INTO CSV FILES
+            atms = [v for k, v in self.ATMS.items(  )] 
+            if atms:
+                self.write_into_csv(atms, 'atm')
 
-        branches = [v for k, v in self.BRANCHES.items()]
-        if branches:
-            self.write_into_csv(branches, 'brc')
+            branches = [v for k, v in self.BRANCHES.items()]
+            if branches:
+                self.write_into_csv(branches, 'brc')
 
 def main(options): 
     """
