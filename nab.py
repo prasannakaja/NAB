@@ -8,12 +8,13 @@ from urllib.error import HTTPError
 import openpyxl
 
 class NationalAustralianBank:
-    def __init__(self, infile):
+    def __init__(self, infile, atmsfile, brcfile):
         self.postcodes_file = infile
         self.URL  = "https://api.nab.com.au/info/nab/location/locationType/atm+brc/queryType/addr/%s/5/50/1000/1/100?v=1"
         
-        self.atm_file = "ATMS.csv"
-        self.branch_file = "BRANCHES.csv"
+        self.atm_file = atmsfile
+        self.branch_file = brcfile
+
         self.missed_postcodes_file = open("ERROR_POSTCODES.txt", "w")
 
         self.branch_headers = ['id', 'key', 'siteName', 'address1', 'address2', 'address3', 'hasCoinSwap', 'postcode', 
@@ -138,7 +139,6 @@ class NationalAustralianBank:
         postcodes = self.read_postcodes()
 
         for i, postcode in enumerate(postcodes):
-            print("Postcode index: %s" %str(i+1))
 
             sleeptime = round(random.uniform(0.5, 1.0), 2)
             time.sleep(sleeptime)
@@ -160,9 +160,11 @@ def main(options):
         MAIN 
     """
     input_file = options.input_file
+    atmsfile = options.atmsfile
+    brcfile = options.brcfile 
 
-    if input_file:
-        atmObj = NationalAustralianBank(input_file)
+    if input_file and atmsfile and brcfile:
+        atmObj = NationalAustralianBank(input_file, atmsfile, brcfile)
         atmObj.scrape_data()
 
     else:
@@ -171,17 +173,19 @@ def main(options):
 
                     script usage is below:
 
-                 python <sciptname> -i<lat-long file> -o<name for csv file> 
+                 python <sciptname> -i <postcodes file name> -a <atm csv filename> -b <branches csv filename> 
         """)
         sys.exit(1)
         
 
 if __name__=='__main__':
   
-    usage = "usage: program.py -i <lat-longs file name> -o <desired csv filename>" 
+    usage = "usage: program.py -i <postcodes file name> -a <atm csv filename> -b <branches csv filename>" 
     parser = optparse.OptionParser(usage=usage) 
     
     parser.add_option('-i', '--input-file',  help="Please provide latlongs.txt file")
+    parser.add_option('-a', '--atmsfile', help="Please provide ATMs csv filename" )
+    parser.add_option('-b', '--brcfile', help="Please provide branches csv filename")
 
     (options, args) = parser.parse_args()
 
